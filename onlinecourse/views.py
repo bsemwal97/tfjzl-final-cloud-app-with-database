@@ -109,7 +109,7 @@ class CourseListView(generic.ListView):
 
 class CourseDetailView(generic.DetailView):
     model = Course
-    template_name = 'onlinecourse/course_detail_bootstrap.html'
+    template_name = 'onlinecourse/course_details_bootstrap.html'
 
 
 def enroll(request, course_id):
@@ -176,7 +176,7 @@ def submit(request, course_id):
 
     # Redirect to show_exam_result with the submission id
     return redirect(
-        'onlinecourse:exam_result',
+        'onlinecourse:show_exam_result',
         course_id=course.id,
         submission_id=submission.id,
     )
