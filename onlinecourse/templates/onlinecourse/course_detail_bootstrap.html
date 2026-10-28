@@ -1,12 +1,15 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ course.name }}</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link
+        rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    >
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -16,63 +19,62 @@
     <!-- Navigation bar -->
     <nav class="navbar navbar-light bg-light">
         <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="{% url 'onlinecourse:index' %}">
-                    Home
+            <a class="navbar-brand" href="{% url 'onlinecourse:index' %}">
+                Home
+            </a>
+
+            {% if user.is_authenticated %}
+            <div>
+                <span class="mr-3">
+                    {{ user.first_name }}({{ user.username }})
+                </span>
+                <a
+                    class="btn btn-link"
+                    href="{% url 'onlinecourse:logout' %}"
+                >
+                    Logout
                 </a>
             </div>
+            {% else %}
+            <form
+                class="form-inline"
+                action="{% url 'onlinecourse:login' %}"
+                method="post"
+            >
+                {% csrf_token %}
 
-            <ul class="nav navbar-nav navbar-right">
-                {% if user.is_authenticated %}
-                <li>
-                    <a class="btn btn-link" href="#">
-                        {{ user.first_name }}({{ user.username }})
-                    </a>
-                    <a class="btn btn-link" href="{% url 'onlinecourse:logout' %}">
-                        Logout
-                    </a>
-                </li>
-                {% else %}
-                <li>
-                    <form
-                        class="form-inline"
-                        action="{% url 'onlinecourse:login' %}"
-                        method="post"
+                <div class="input-group">
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Username"
+                        name="username"
+                        required
                     >
-                        {% csrf_token %}
-
-                        <div class="input-group">
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Username"
-                                name="username"
-                            >
-                            <input
-                                type="password"
-                                class="form-control"
-                                placeholder="Password"
-                                name="psw"
-                            >
-                            <button class="btn btn-primary" type="submit">
-                                Login
-                            </button>
-                            <a
-                                class="btn btn-link"
-                                href="{% url 'onlinecourse:registration' %}"
-                            >
-                                Sign Up
-                            </a>
-                        </div>
-                    </form>
-                </li>
-                {% endif %}
-            </ul>
+                    <input
+                        type="password"
+                        class="form-control"
+                        placeholder="Password"
+                        name="psw"
+                        required
+                    >
+                    <button class="btn btn-primary" type="submit">
+                        Login
+                    </button>
+                    <a
+                        class="btn btn-link"
+                        href="{% url 'onlinecourse:registration' %}"
+                    >
+                        Sign Up
+                    </a>
+                </div>
+            </form>
+            {% endif %}
         </div>
     </nav>
 
     <!-- Course name and lessons -->
-    <div class="container-fluid">
+    <main class="container my-4">
         <h2>{{ course.name }}</h2>
 
         <div class="card-columns-vertical">
@@ -90,7 +92,7 @@
             {% endfor %}
         </div>
 
-        <!-- Exam section -->
+        <!-- Course detail template changes go here -->
         {% if user.is_authenticated %}
         <br>
 
@@ -141,17 +143,21 @@
                         {% endfor %}
                     </div>
                 </div>
+                {% empty %}
+                <p class="mt-3">No exam questions are available.</p>
                 {% endfor %}
 
+                {% if course.question_set.exists %}
                 <button
                     type="submit"
                     class="btn btn-success btn-block mt-2"
                 >
                     Submit
                 </button>
+                {% endif %}
             </form>
         </div>
         {% endif %}
-    </div>
+    </main>
 </body>
 </html>
